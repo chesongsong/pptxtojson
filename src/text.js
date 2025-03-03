@@ -13,6 +13,7 @@ import {
   getFontSubscript,
   getFontShadow,
 } from './fontStyle'
+import { getFillType, getGradFill } from './fill'
 
 export function genTextBody(textBodyNode, spNode, slideLayoutSpNode, type, warpObj) {
   if (!textBodyNode) return ''
@@ -131,6 +132,15 @@ export function genSpanElement(node, pNode, textBodyNode, pFontStyle, slideLayou
   if (fontSpace) styleText += `letter-spacing: ${fontSpace};`
   if (subscript) styleText += `vertical-align: ${subscript};`
   if (shadow) styleText += `text-shadow: ${shadow};`
+  // 渐变色
+  const rPrNode = getTextByPathList(node, ['a:rPr'])
+  if (rPrNode) {
+    const filTyp = getFillType(rPrNode)
+    if (filTyp === 'GRADIENT_FILL') {
+      const fontGradientFillStr = getGradFill(rPrNode, pNode, lstStyle, pFontStyle, lvl, warpObj)  
+      styleText += fontGradientFillStr
+    }
+  }
 
   const linkID = getTextByPathList(node, ['a:rPr', 'a:hlinkClick', 'attrs', 'r:id'])
   if (linkID) {
